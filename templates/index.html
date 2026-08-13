@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>CLOVISS KEY</title>
+
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<div class="glow"></div>
+
+<main class="card">
+
+  <div class="badge">
+    ⚡ FREE ACCESS · 1 KEY
+  </div>
+
+  <h1>
+    CLOVISS <span>KEY</span>
+  </h1>
+
+  <p class="sub">
+    Get your free key.
+  </p>
+
+  <a
+    class="channel"
+    href="{{ channel_url }}"
+    target="_blank"
+    rel="noopener">
+    📢 JOIN CHANNEL
+  </a>
+
+  <p class="hint">
+    Join our channel and get your free key.
+  </p>
+
+  <button
+    id="getKey"
+    class="keybtn">
+    🔑 GET FREE KEY
+  </button>
+
+  <div id="result"></div>
+
+  <div class="stock">
+    AVAILABLE KEYS:
+    <b>{{ remaining }}</b>
+  </div>
+
+</main>
+
+
+<script>
+
+document.getElementById("getKey").onclick = async function () {
+
+  const button = document.getElementById("getKey");
+  const result = document.getElementById("result");
+
+  button.disabled = true;
+  button.textContent = "⏳ CHECKING...";
+
+  try {
+
+    const response = await fetch(
+      "/api/get-key",
+      {
+        method: "POST",
+        credentials: "same-origin"
+      }
+    );
+
+    const data = await response.json();
+
+    if (data.ok) {
+
+      result.innerHTML = `
+        <div class="key">
+          ${data.key}
+        </div>
+
+        <button
+          class="copy"
+          onclick="copyKey('${data.key}')">
+          📋 COPY KEY
+        </button>
+      `;
+
+      button.textContent = "✅ KEY RECEIVED";
+
+    } else {
+
+      result.innerHTML = `
+        <div class="error">
+          ${data.error || "Unable to get key"}
+        </div>
+      `;
+
+      button.disabled = false;
+      button.textContent = "🔑 GET FREE KEY";
+
+    }
+
+  } catch (error) {
+
+    result.innerHTML = `
+      <div class="error">
+        Connection error
+      </div>
+    `;
+
+    button.disabled = false;
+    button.textContent = "🔑 GET FREE KEY";
+
+  }
+
+};
+
+
+function copyKey(key) {
+
+  navigator.clipboard.writeText(key)
+    .then(() => {
+
+      const buttons =
+        document.querySelectorAll(".copy");
+
+      if (buttons.length) {
+        buttons[0].textContent = "✅ COPIED";
+      }
+
+    });
+
+}
+
+</script>
+
+</body>
+</html>
