@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>CLOVISS KEY</title>
+
+  <link rel="stylesheet" href="/static/style.css">
+
+  <script async
+    src="https://telegram.org/js/telegram-widget.js?22"
+    data-telegram-login="{{ bot_username }}"
+    data-size="large"
+    data-userpic="false"
+    data-request-access="write">
+  </script>
+</head>
+
+<body>
+
+<div class="glow"></div>
+
+<main class="card">
+
+  <div class="badge">
+    ⚡ FREE ACCESS · 1 KEY / DAY
+  </div>
+
+  <h1>
+    CLOVISS <span>KEY</span>
+  </h1>
+
+  <p class="sub">
+    Get your free key once every 24 hours.
+  </p>
+
+  <a
+    class="channel"
+    href="{{ channel_url }}"
+    target="_blank">
+    📢 JOIN CHANNEL
+  </a>
+
+  <div id="loginArea">
+
+    <p class="hint">
+      Login with Telegram to receive your key
+    </p>
+
+    <div id="telegram-login"></div>
+
+  </div>
+
+  <button
+    id="getKey"
+    class="keybtn"
+    disabled>
+    🔑 GET FREE KEY
+  </button>
+
+  <div id="result"></div>
+
+  <div class="stock">
+    AVAILABLE KEYS:
+    <b>{{ remaining }}</b>
+  </div>
+
+</main>
+
+<script>
+
+function onTelegramAuth(user) {
+
+  fetch("/api/auth", {
+    method: "POST",
+
+    headers: {
+      "Content-Type": "application/json"
+    },
+
+    body: JSON.stringify(user)
+
+  })
+  .then(response => response.json())
+
+  .then(data => {
+
+    if (data.ok) {
+
+      document.getElementById("getKey").disabled = false;
+
+      document.getElementById("loginArea").innerHTML = `
+        <div class="logged">
+          ✅ Telegram connected
+        </div>
+      `;
+
+    } else {
+
+      document.getElementById("result").innerHTML =
+        `<div class="error">${data.error || "Login error"}</div>`;
+
+    }
+
+  })
+  .catch(() => {
+
+    document.getElementById("result").innerHTML =
+      `<div class="error">Connection error</div>`;
+
+  });
+
+}
+
+
+document.getElementById("getKey").onclick = async function () {
+
+  const button = document.getElementById("getKey");
+
+  button.disabled = true;
+
+  button.textContent = "⏳ CHECKING...";
+
+  try {
+
+    const response = await fetch(
+      "/api/get-key",
+      {
+        method: "POST"
+      }
+    );
+
+    const data = await response.json();
+
+    const result =
+      document.getElementById("result");
+
+
+    if (data.ok) {
+
+      result.innerHTML = `
+        <div class="key">
+          ${data.key}
+        </div>
+
+        <button
+          class="copy"
+          onclick="copyKey('${data.key}')">
+          📋 COPY KEY
+        </button>
+      `;
+
+      button.textContent =
+        "✅ KEY RECEIVED";
+
+    }
+
+    else {
+
+      result.innerHTML = `
+        <div class="error">
+          ${data.error || "Unable to get key"}
+        </div>
+      `;
+
+      button.disabled = false;
+
+      button.textContent =
+        "🔑 GET FREE KEY";
+
+    }
+
+  }
+
+  catch (error) {
+
+    document.getElementById("result").innerHTML = `
+      <div class="error">
+        Connection error
+      </div>
+    `;
+
+    button.disabled = false;
+
+    button.textContent =
+      "🔑 GET FREE KEY";
+
+  }
+
+};
+
+
+function copyKey(key) {
+
+  navigator.clipboard.writeText(key)
+
+    .then(() => {
+
+      const buttons =
+        document.querySelectorAll(".copy");
+
+      if (buttons.length) {
+
+        buttons[0].textContent =
+          "✅ COPIED";
+
+      }
+
+    });
+
+}
+
+</script>
+
+</body>
+</html>
