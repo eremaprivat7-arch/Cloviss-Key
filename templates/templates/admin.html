@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>CLOVISS KEY — ADMIN</title>
+
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<main class="admin">
+
+  <h1>CLOVISS KEY — ADMIN</h1>
+
+  <div class="stats">
+
+    <div>
+      Total
+      <b>{{ stats.total }}</b>
+    </div>
+
+    <div>
+      Remaining
+      <b>{{ stats.remaining }}</b>
+    </div>
+
+    <div>
+      Used
+      <b>{{ stats.used }}</b>
+    </div>
+
+    <div>
+      Users
+      <b>{{ stats.users }}</b>
+    </div>
+
+  </div>
+
+
+  <section class="panel">
+
+    <h2>➕ Add Keys</h2>
+
+    <p>
+      Әр key-ді жаңа жолға жаз.
+    </p>
+
+    <form
+      method="post"
+      action="/admin/add-keys">
+
+      <textarea
+        name="keys"
+        placeholder="CLOVISS-ABC123-XXXX
+CLOVISS-DEF456-XXXX
+CLOVISS-GHI789-XXXX"
+        required></textarea>
+
+      <button
+        type="submit"
+        class="keybtn">
+        ➕ ADD KEYS
+      </button>
+
+    </form>
+
+  </section>
+
+
+  <section class="panel">
+
+    <h2>🔐 Key History</h2>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Key</th>
+            <th>User</th>
+            <th>Status</th>
+            <th>Time</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for k in keys %}
+
+          <tr>
+
+            <td>
+              {{ k.key }}
+            </td>
+
+            <td>
+
+              {% if k.username %}
+
+                @{{ k.username }}
+
+              {% elif k.used_by %}
+
+                {{ k.used_by }}
+
+              {% else %}
+
+                —
+
+              {% endif %}
+
+            </td>
+
+            <td>
+
+              {% if k.used %}
+
+                <span class="status-used">
+                  USED
+                </span>
+
+              {% else %}
+
+                <span class="status-free">
+                  FREE
+                </span>
+
+              {% endif %}
+
+            </td>
+
+            <td>
+              {{ k.used_at or "—" }}
+            </td>
+
+          </tr>
+
+        {% else %}
+
+          <tr>
+
+            <td colspan="4">
+              No keys yet.
+            </td>
+
+          </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+
+  <form
+    method="post"
+    action="/admin/logout">
+
+    <button
+      type="submit"
+      class="logout">
+      LOGOUT
+    </button>
+
+  </form>
+
+</main>
+
+</body>
+</html>
