@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>CLOVISS KEY — Admin</title>
+
+  <link
+    rel="stylesheet"
+    href="/static/style.css"
+  >
+</head>
+
+<body>
+
+<div class="glow"></div>
+
+<main class="card admin-card">
+
+  <div class="badge">
+    ⚡ CLOVISS KEY · ADMIN PANEL
+  </div>
+
+  <h1>
+    CLOVISS <span>ADMIN</span>
+  </h1>
+
+
+  <!-- STATS -->
+
+  <div class="stats">
+
+    <div class="stat">
+      <span>TOTAL KEYS</span>
+      <b>{{ stats.total }}</b>
+    </div>
+
+    <div class="stat">
+      <span>AVAILABLE</span>
+      <b>{{ stats.remaining }}</b>
+    </div>
+
+    <div class="stat">
+      <span>USED</span>
+      <b>{{ stats.used }}</b>
+    </div>
+
+    <div class="stat">
+      <span>DEVICES</span>
+      <b>{{ stats.devices }}</b>
+    </div>
+
+    <div class="stat">
+      <span>CLAIMED</span>
+      <b>{{ stats.claimed }}</b>
+    </div>
+
+  </div>
+
+
+  <!-- ADD KEYS -->
+
+  <section class="admin-section">
+
+    <h2>🔑 ADD KEYS</h2>
+
+    <p class="hint">
+      Add one key per line.
+    </p>
+
+    <form
+      method="POST"
+      action="/admin/add-keys"
+    >
+
+      <textarea
+        name="keys"
+        rows="8"
+        placeholder="CLOVISS-ABC123-XXXX
+CLOVISS-DEF456-XXXX
+CLOVISS-GHI789-XXXX"
+        required></textarea>
+
+      <button
+        type="submit"
+        class="keybtn">
+        ➕ ADD KEYS
+      </button>
+
+    </form>
+
+  </section>
+
+
+  <!-- RESET USERS -->
+
+  <section class="admin-section">
+
+    <h2>🔄 RESET USERS</h2>
+
+    <p class="hint">
+      Reset the claim status of all devices.
+      After reset, every device can receive one new key.
+    </p>
+
+    <form
+      method="POST"
+      action="/admin/reset-users"
+      onsubmit="return confirmReset();"
+    >
+
+      <button
+        type="submit"
+        class="resetbtn">
+        🔄 RESET ALL USERS
+      </button>
+
+    </form>
+
+  </section>
+
+
+  <!-- KEYS LIST -->
+
+  <section class="admin-section">
+
+    <h2>📋 KEY HISTORY</h2>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>ID</th>
+            <th>KEY</th>
+            <th>STATUS</th>
+            <th>USED AT</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for key in keys %}
+
+          <tr>
+
+            <td>
+              {{ key.id }}
+            </td>
+
+            <td class="key-cell">
+              {{ key.key }}
+            </td>
+
+            <td>
+
+              {% if key.used %}
+
+                <span class="used">
+                  USED
+                </span>
+
+              {% else %}
+
+                <span class="available">
+                  AVAILABLE
+                </span>
+
+              {% endif %}
+
+            </td>
+
+            <td>
+              {{ key.used_at or "-" }}
+            </td>
+
+          </tr>
+
+        {% else %}
+
+          <tr>
+
+            <td
+              colspan="4"
+              class="empty">
+              No keys yet.
+            </td>
+
+          </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+
+  <!-- LOGOUT -->
+
+  <form
+    method="POST"
+    action="/admin/logout"
+  >
+
+    <button
+      type="submit"
+      class="logout">
+      🚪 LOGOUT
+    </button>
+
+  </form>
+
+</main>
+
+
+<script>
+
+function confirmReset() {
+
+  return confirm(
+    "Барлық құрылғылардың KEY алу лимитін reset жасауға сенімдісің бе?"
+  );
+
+}
+
+</script>
+
+</body>
+</html>
